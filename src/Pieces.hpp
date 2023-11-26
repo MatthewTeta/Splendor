@@ -6,6 +6,9 @@
  */
 
 #include <functional>
+#ifndef PIECES_HPP
+#define PIECES_HPP
+
 #include <iostream>
 #include <vector>
 
@@ -45,7 +48,7 @@ public:
     };
 
     // Constructor
-    Card (Type a_card_type, Token::Type a_token_type, int a_points, std::vector<Token::Type> a_cost)
+    Card (Type a_card_type, Token::Type a_token_type, int a_points, std::vector<std::pair<int, Token::Type>> a_cost)
     : Token(a_token_type)
     {
         m_card_type = a_card_type;
@@ -60,14 +63,14 @@ public:
     // Properties
     Type m_card_type;
     int m_points;
-    std::vector<Token::Type> m_cost;
+    std::vector<std::pair<int, Token::Type>> m_cost;
 
 };
 
 class Noble {
 public:
     // Constructor
-    Noble (int a_points, std::vector<Token::Type> a_cost)
+    Noble (int a_points, std::vector<std::pair<int, Card::Type>> a_cost)
     {
         m_points = a_points;
         m_cost = a_cost;
@@ -79,7 +82,7 @@ public:
 
     // Properties
     int m_points;
-    std::vector<Card::Type> m_cost;
+    std::vector<std::pair<int, Card::Type>> m_cost;
 
 };
 
@@ -101,3 +104,4 @@ public:
 
 }
 
+#endif
