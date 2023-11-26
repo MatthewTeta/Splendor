@@ -5,6 +5,7 @@
  * File: Pieces.hpp
  */
 
+#include <functional>
 #include <iostream>
 #include <vector>
 
@@ -82,13 +83,19 @@ public:
 
 };
 
+class Game;
+using PlayerFunc = std::function<Action(const Game &)>;
+
 class Player {
 public:
     std::vector<Token> m_tokens;
     std::vector<Card>  m_cards;
-    std::vector<Card>  m_reserve_cards_public;
-private:
-    std::vector<Card>  m_reserve_cards_private;
+    std::vector<Card>  m_reserve_cards;
+    PlayerFunc  m_play;
+    
+    Player(PlayerFunc a_play) {
+        m_play = a_play;
+    }
 
 };
 
