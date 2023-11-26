@@ -9,7 +9,7 @@
 #ifndef PIECES_HPP
 #define PIECES_HPP
 
-#include <iostream>
+#include <functional>
 #include <vector>
 
 namespace Splendor {
