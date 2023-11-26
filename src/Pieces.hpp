@@ -5,11 +5,9 @@
  * File: Pieces.hpp
  */
 
-#include <functional>
 #ifndef PIECES_HPP
 #define PIECES_HPP
 
-#include <functional>
 #include <vector>
 
 namespace Splendor {
@@ -26,11 +24,11 @@ public:
     };
 
     // Constructor
-    Token (Type a_token_type) {
-        this->m_token_type = a_token_type;
-    };
+    Token() = default;
+    Token(Type a_token_type)
+    : m_token_type(a_token_type) {};
     // No copy...
-    Token (const Token& o) = delete;
+    // Token(const Token& o) = delete;
     // Move is fine
     // Token (Token&& o)
 
@@ -48,15 +46,11 @@ public:
     };
 
     // Constructor
-    Card (Type a_card_type, Token::Type a_token_type, int a_points, std::vector<std::pair<int, Token::Type>> a_cost)
-    : Token(a_token_type)
-    {
-        m_card_type = a_card_type;
-        m_points = a_points;
-        m_cost = a_cost;
-    };
+    Card() = default;
+    Card(Type a_card_type, Token::Type a_token_type, int a_points, std::vector<std::pair<int, Token::Type>> a_cost)
+    : Token(a_token_type), m_card_type(a_card_type), m_points(a_points), m_cost(a_cost) {};
     // No copy...
-    Card (const Card& o) = delete;
+    // Card(const Card& o) = delete;
     // Move is fine
     // Card (Card&& o)
 
@@ -69,36 +63,19 @@ public:
 
 class Noble {
 public:
+
     // Constructor
-    Noble (int a_points, std::vector<std::pair<int, Card::Type>> a_cost)
-    {
-        m_points = a_points;
-        m_cost = a_cost;
-    }
+    Noble() = default;
+    Noble(int a_points, std::vector<std::pair<int, Token::Type>> a_cost)
+    : m_points(a_points), m_cost(a_cost) {};
     // No copy...
-    Noble (const Noble& o) = delete;
+    // Noble(const Noble& o) = delete;
     // Move is fine
     // Noble (Noble&& o)
 
     // Properties
     int m_points;
-    std::vector<std::pair<int, Card::Type>> m_cost;
-
-};
-
-class Game;
-using PlayerFunc = std::function<Action(const Game &)>;
-
-class Player {
-public:
-    std::vector<Token> m_tokens;
-    std::vector<Card>  m_cards;
-    std::vector<Card>  m_reserve_cards;
-    PlayerFunc  m_play;
-    
-    Player(PlayerFunc a_play) {
-        m_play = a_play;
-    }
+    std::vector<std::pair<int, Token::Type>> m_cost;
 
 };
 

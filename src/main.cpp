@@ -9,6 +9,7 @@
 
 #include "Pieces.hpp"
 #include "Board.hpp"
+#include "Game.hpp"
 
 int main() {
     std::cout << "Test/n" << std::endl;
