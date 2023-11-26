@@ -5,6 +5,9 @@
  * File: Board.hpp
  */
 
+#ifndef BOARD_HPP
+#define BOARD_HPP
+
 #include <map>
 #include <optional>
 #include <array>
@@ -18,23 +21,21 @@ class Board {
 private:
     Deck m_deck;
 public:
-    std::array<std::optional<Noble>, 5> m_nobles;
-    std::array<std::array<std::optional<Card>, 4>, 4> m_options;
+    std::vector<Noble> m_nobles;
+    std::array<std::vector<Card>, 3> m_options;
     std::map<Token::Type, std::vector<Token>> m_bank;
 
     Board(
-        std::array<Noble, 5> a_nobles,
-        // std::array<Deck, 3> a_decks,
-        std::array<Card, 40> a_deck_1,
-        std::array<Card, 30> a_deck_2,
-        std::array<Card, 20> a_deck_3,
+        std::vector<Noble> &a_nobles,
+        std::array<std::vector<Card>, 3> &a_options,
+        std::map<Token::Type, std::vector<Token>> &a_bank
     ) {
-        // for (Noble& n : m_nobles) {
-        //     n = std::make_optional(*a_nobles++);
-        // }
-        m_nobles = a_nobles;
+        m_nobles = std::move(a_nobles);
+        m_options = std::move(a_options);
+        m_bank = std::move(a_bank);
     }
 };
 
 }
 
+#endif
