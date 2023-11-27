@@ -8,6 +8,7 @@
 #ifndef PIECES_HPP
 #define PIECES_HPP
 
+#include <iostream>
 #include <vector>
 #define NUM_MONETARY_RESOURCE_TYPES 5
 
