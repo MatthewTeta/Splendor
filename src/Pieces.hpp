@@ -9,33 +9,45 @@
 #define PIECES_HPP
 
 #include <vector>
+#define NUM_MONETARY_RESOURCE_TYPES 5
 
 namespace Splendor {
 
+enum class Gemstone { Emerald, Sapphire, Ruby, Diamond, Onyx, Gold };
+
+
 class Token {
-public:
-    enum Type {
-        Emerald,
-        Sapphire,
-        Ruby,
-        Diamond,
-        Onyx,
-        Gold,
-    };
-
-    // Constructor
-    Token() = default;
-    Token(Type a_token_type)
-    : m_token_type(a_token_type) {};
-    // No copy...
-    // Token(const Token& o) = delete;
-    // Move is fine
-    // Token (Token&& o)
-
-    // Properties
-    Type m_token_type;
-
+    private:
+        Gemstone m_token_type;
+    
+    public:
+        Token(Gemstone a_token_type) : m_token_type(a_token_type) {};
 };
+
+class Card {
+    using card_cost = std::array<int, NUM_MONETARY_RESOURCE_TYPES>;
+    enum CardType { TIER_1, TIER_2, TIER_3 };
+    
+    private:
+        CardType m_card_type;
+        Gemstone m_token_type;
+        card_cost m_card_cost;
+  
+    public:
+        Card(CardType a_card_type) {
+            switch(a_card_type) {
+                case TIER_1:
+
+                    pass;
+                case TIER_2:
+                    pass;
+                case TIER_3:
+                    pass;
+            }
+        } 
+      
+
+}
 
 class Card : public Token {
 public:
