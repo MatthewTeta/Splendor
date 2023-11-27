@@ -9,7 +9,7 @@ main: main.o
 	$(CXX) $(CXXFLAGS) -o main main.o
 
 # Compile the source files into object files
-main.o: main.cpp Board.hpp Pieces.hpp
+main.o: main.cpp Resources.hpp Pieces.hpp
 	$(CXX) $(CXXFLAGS) -c main.cpp
 
 # Clean up the directory

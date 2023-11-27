@@ -10,86 +10,60 @@
 
 #include <iostream>
 #include <vector>
+#include <array>
+#include <map>
+
+
 #define NUM_MONETARY_RESOURCE_TYPES 5
 
 namespace Splendor {
 
 enum class Gemstone { Emerald, Sapphire, Ruby, Diamond, Onyx, Gold };
 
-
 class Token {
+    public:
+        Token(Gemstone a_token_type) : m_token_type(a_token_type) {};
+        // No copy constructor
+
+        // Getter methods
+        const Gemstone get_token_type() const { return m_token_type; };
+
     private:
         Gemstone m_token_type;
     
-    public:
-        Token(Gemstone a_token_type) : m_token_type(a_token_type) {};
 };
 
 class Card {
-    using card_cost = std::array<int, NUM_MONETARY_RESOURCE_TYPES>;
-    enum CardType { TIER_1, TIER_2, TIER_3 };
-    
-    private:
-        CardType m_card_type;
-        Gemstone m_token_type;
-        card_cost m_card_cost;
   
     public:
-        Card(CardType a_card_type) {
-            switch(a_card_type) {
-                case TIER_1:
+        using card_cost = std::map<Gemstone, int>;
+        enum Type { ONE, TWO, THREE };
+        
+        Card(Type a_card_type, int a_points, Gemstone a_token_type, card_cost a_card_cost) : m_card_type(a_card_type), m_points(a_points), m_token_type(a_token_type), m_card_cost(a_card_cost) {};
+        // No copy 
 
-                    pass;
-                case TIER_2:
-                    pass;
-                case TIER_3:
-                    pass;
-            }
-        } 
-      
+        // Getter methods
+        const Type get_card_type() const { return m_card_type; };
+        const int get_points() const { return m_points; };
+        const Gemstone get_token_type() const { return m_token_type; };
+        const card_cost get_card_cost() const { return m_card_cost; };
 
-}
-
-class Card : public Token {
-public:
-    enum Type {
-        ONE,
-        TWO,
-        THREE,
-    };
-
-    // Constructor
-    Card() = default;
-    Card(Type a_card_type, Token::Type a_token_type, int a_points, std::vector<std::pair<int, Token::Type>> a_cost)
-    : Token(a_token_type), m_card_type(a_card_type), m_points(a_points), m_cost(a_cost) {};
-    // No copy...
-    // Card(const Card& o) = delete;
-    // Move is fine
-    // Card (Card&& o)
-
-    // Properties
-    Type m_card_type;
-    int m_points;
-    std::vector<std::pair<int, Token::Type>> m_cost;
-
+    private:
+        const Type m_card_type;
+        const int m_points;
+        const Gemstone m_token_type;
+        const card_cost m_card_cost;
 };
 
 class Noble {
-public:
-
-    // Constructor
-    Noble() = default;
-    Noble(int a_points, std::vector<std::pair<int, Token::Type>> a_cost)
-    : m_points(a_points), m_cost(a_cost) {};
-    // No copy...
-    // Noble(const Noble& o) = delete;
-    // Move is fine
-    // Noble (Noble&& o)
-
-    // Properties
-    int m_points;
-    std::vector<std::pair<int, Token::Type>> m_cost;
-
+    
+    public:
+        using noble_cost = std::map<Card, int>;
+        static const int m_points = 3;
+        Noble(noble_cost a_noble_cost) : m_noble_cost(a_noble_cost) {};
+    private:
+        const noble_cost m_noble_cost;
+    
 };
 
 }
