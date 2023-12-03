@@ -1,4 +1,6 @@
 #!/bin/bash
 
-mkdir -p
-cd build && cmake .. && make -j $(nprocs)
+mkdir -p build
+cmake -Bbuild -GNinja --fresh && \
+cd build && \
+ninja
