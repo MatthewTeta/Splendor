@@ -1,4 +1,4 @@
 #!/bin/bash
 
 mkdir -p
-cd build && cmake ..
+cd build && cmake .. && make -j $(nprocs)

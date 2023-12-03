@@ -9,7 +9,6 @@
 #include "Board.hpp"
 #include <cstdint>
 #include <functional>
-#include <stdexcept>
 #include <variant>
 
 namespace Splendor {
@@ -37,9 +36,12 @@ struct Purchase {
     Card &card;
 };
 
-// This allows us to use the std::visit to check which variant we have...
-template<class... Ts> struct overload : Ts... { using Ts::operator()...; };
-using Action = std::variant<std::monostate, TakeThree, TakeTwo, Reserve, Purchase>;
+template<class... Ts>
+struct overloaded : Ts... { using Ts::operator()...; };
+// explicit deduction guide (not needed as of C++20)
+/* template<class... Ts>
+overloaded(Ts...) -> overloaded<Ts...>; */
+using Action = std::variant<TakeThree, TakeTwo, Reserve, Purchase>;
 
 
 class Game;
@@ -215,9 +217,8 @@ public:
             const Action a = p.play(*this);
 
             // Handle the move
-            std::visit(overload {
-                [&](std::monostate&) { throw std::domain_error("This should not be possible.") },
-                [&](TakeThree& m) {
+            std::visit(overloaded{
+                [&](TakeThree m) {
 
                     // Check move validity
                     if (
@@ -239,12 +240,14 @@ public:
 
                     // Perform the action
                     for (auto type : m.token_types) {
-                        p.m_tokens.insert(p.m_tokens.end(), m_board.m_bank.end() - 1, m_board.m_bank.end());
-                        m_board.m_bank.erase(m_board.m_bank.end() - 1);
+                        // p.m_tokens.insert(p.m_tokens.end(), m_board.m_bank.end() - 1, m_board.m_bank.end());
+                        // m_board.m_bank.erase(m_board.m_bank.end() - 1);
+                        p.m_tokens.push_back(Token(type));
+                        m_board.m_bank[type].pop_back();
                     }
 
                 },
-                [&](TakeTwo& m) {
+                [&](TakeTwo m) {
 
                     // Check move validity
                     // Do we have enough tokens
@@ -254,17 +257,17 @@ public:
                     }
 
                     // Perform the action
-                    p.m_tokens.insert(p.m_tokens.end(), m_board.m_bank.end() - 2, m_board.m_bank.end());
-                    m_board.m_bank.erase(m_board.m_bank.end() - 2);
+                    // p.m_tokens.insert(p.m_tokens.end(), m_board.m_bank.end() - 2, m_board.m_bank.end());
+                    // m_board.m_bank.erase(m_board.m_bank.end() - 2);
 
                 },
-                [&](Reserve& m) {
+                [&](Reserve m) {
 
                     // Check move validity
            
 
                 },
-                [&](Purchase& m) {}
+                [&](Purchase m) {}
             }, a);
         } while (!valid);
     }
