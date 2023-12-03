@@ -14,7 +14,6 @@ class Mine {
         Mine() = default;
 };
 
-
 template <typename GenericDeckMember> 
 class Deck {
     private:
@@ -24,15 +23,11 @@ class Deck {
 };
 
 class CardDeck : public Deck<Splendor::Card> {
-    private:
-        std::vector<Splendor::Card> card_deck;
     public:
         CardDeck() = default;
 };
 
 class NobleDeck : public Deck<Splendor::Noble> {
-    private:
-        std::vector<Splendor::Noble> noble_deck;
     public:
         NobleDeck() = default;
 };

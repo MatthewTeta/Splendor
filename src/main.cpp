@@ -12,7 +12,11 @@
 
 int main() {
     Splendor::Card *c = new Splendor::Card(Splendor::Card::Type::ONE, 1, Splendor::Gemstone::Diamond, {{Splendor::Gemstone::Diamond, 1}});
+    Splendor::Noble *n = new Splendor::Noble({{Splendor::Gemstone::Diamond, 1}});
     std::cout << c->get_points() << std::endl;
+
+
+    
 
     return 0;
 
