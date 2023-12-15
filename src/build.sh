@@ -1,6 +1,7 @@
 #!/bin/bash
 
 mkdir -p build
-cmake -Bbuild -GNinja --fresh && \
+cmake -Bbuild -GNinja $@ && \
 cd build && \
-ninja
+ninja && \
+./Splendor

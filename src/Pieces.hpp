@@ -8,6 +8,7 @@
 #ifndef PIECES_HPP
 #define PIECES_HPP
 
+#include <string>
 #include <vector>
 
 namespace Splendor {
@@ -22,6 +23,20 @@ public:
         Onyx,
         Gold,
     };
+    static Type type_from_str(std::string type_str) {
+        if (type_str == "Diamond")
+            return Token::Type::Diamond;
+        else if (type_str == "Sapphire")
+            return Token::Type::Sapphire;
+        else if (type_str == "Emerald")
+            return Token::Type::Emerald;
+        else if (type_str == "Ruby")
+            return Token::Type::Ruby;
+        else if (type_str == "Onyx")
+            return Token::Type::Onyx;
+        // else if (type_str == "Gold")
+            return Token::Type::Gold;
+    }
 
     // Constructor
     Token() = default;
@@ -44,6 +59,14 @@ public:
         TWO,
         THREE,
     };
+    static Type type_from_str(std::string level_str) {
+        if (level_str == "ONE")
+            return Card::Type::ONE;
+        else if (level_str == "TWO")
+            return Card::Type::TWO;
+        // else if (level_str == "THREE")
+            return Card::Type::THREE;
+    }
 
     // Constructor
     Card() = default;

@@ -27,11 +27,11 @@ project(Splendor
                 CXX
         )
 
-set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_GENERATOR Ninja)
+set(cmake_cxx_standard 20)
+set(cmake_export_compile_commands on)
+set(cmake_generator ninja)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++23")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
 
 include_directories(${CMAKE_SOURCE_DIR})
 file(GLOB SOURCE_FILES ${CMAKE_SOURCE_DIR}/*.cpp)
