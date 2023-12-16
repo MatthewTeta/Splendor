@@ -29,11 +29,11 @@ struct TakeTwo {
 };
 
 struct Reserve {
-    Card &card;
+    V2 card_pos;
 };
 
 struct Purchase {
-    Card &card;
+    V2 card_pos;
 };
 
 template<class... Ts>
@@ -80,8 +80,7 @@ public:
         // Current player whose turn it is
         Player &p = m_players[m_turn++];
         m_turn %= m_players.size();
-
-        m_board.prepare_for_turn();
+        auto bank = m_board.getBank();
 
         // Have the player make a move
         bool valid = true;
@@ -104,7 +103,7 @@ public:
 
                     // Do we have enough tokens
                     for (auto type : m.token_types) {
-                        if (!m_board.m_bank[type].size()) {
+                        if (!bank[type].size()) {
                             valid = false;
                             return;
                         }
@@ -112,10 +111,10 @@ public:
 
                     // Perform the action
                     for (auto type : m.token_types) {
-                        // p.m_tokens.insert(p.m_tokens.end(), m_board.m_bank.end() - 1, m_board.m_bank.end());
-                        // m_board.m_bank.erase(m_board.m_bank.end() - 1);
+                        // p.m_tokens.insert(p.m_tokens.end(), bank.end() - 1, bank.end());
+                        // bank.erase(bank.end() - 1);
                         p.m_tokens.push_back(Token(type));
-                        m_board.m_bank[type].pop_back();
+                        bank[type].pop_back();
                     }
 
                 },
@@ -123,14 +122,14 @@ public:
 
                     // Check move validity
                     // Do we have enough tokens
-                    if (m_board.m_bank[m.token_type].size() < 4) {
+                    if (bank[m.token_type].size() < 4) {
                         valid = false;
                         return;
                     }
 
                     // Perform the action
-                    // p.m_tokens.insert(p.m_tokens.end(), m_board.m_bank.end() - 2, m_board.m_bank.end());
-                    // m_board.m_bank.erase(m_board.m_bank.end() - 2);
+                    // p.m_tokens.insert(p.m_tokens.end(), bank.end() - 2, bank.end());
+                    // bank.erase(bank.end() - 2);
 
                 },
                 [&](Reserve m) {

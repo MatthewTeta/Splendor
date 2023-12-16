@@ -13,6 +13,10 @@
 
 namespace Splendor {
 
+struct V2 {
+    int x, y;
+};
+
 class Token {
 public:
     enum Type {

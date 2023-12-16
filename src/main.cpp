@@ -10,6 +10,10 @@
 #include "ftxui/dom/elements.hpp"
 #include "ftxui/screen/screen.hpp"
 #include "ftxui/screen/string.hpp"
+#include "ftxui/component/screen_interactive.hpp"   // for Component, ScreenInteractive
+#include "ftxui/component/captured_mouse.hpp"       // for ftxui
+#include "ftxui/component/component.hpp"            // for Input, Renderer, Vertical
+#include "ftxui/component/component_base.hpp"       // for ComponentBase
 
 #include "Pieces.hpp"
 #include "Board.hpp"
@@ -32,7 +36,10 @@ int main(void) {
     Board board;
     board.load_cards("../Splendor_Cards.csv");
     board.shuffle();
-    board.prepare_for_turn();
+
+    auto pos_text = [](V2 pos) {
+        return text(" " + std::to_string(pos.x) + ", " + std::to_string(pos.y) + " ");
+    };
 
     auto token_text = [&](Token::Type t, int num) {
         std::string n_str = std::to_string(num);
@@ -54,7 +61,7 @@ int main(void) {
         }
     };
 
-    auto deck = [&](int num) {
+    auto deck = [&](int num, V2 pos) {
         auto centeredNumber = hbox({
             filler(),
             text(std::to_string(num)) | hcenter,
@@ -67,14 +74,12 @@ int main(void) {
             filler(),
         });
 
-        return window(text(L"X, X"), content)
+        return window(pos_text(pos), content)
             | size(WIDTH, EQUAL, CARD_WIDTH)
             | size(HEIGHT, EQUAL, CARD_HEIGHT);
     };
 
-
-
-    auto card = [&](Card& c) {
+    auto card = [&](Card& c, V2 pos) {
         std::vector<Element> children = {
             hbox({text(L"Points:    "), text(std::to_string(c.m_points)) | bold}) | color(Color::White),
             separator(),
@@ -84,14 +89,14 @@ int main(void) {
             children.push_back(token_text(it.second, it.first));
         }
         auto content = vbox(children);
-        return window(text(L"0, X"), content)
+        return window(pos_text(pos), content)
         | size(WIDTH, EQUAL, CARD_WIDTH)
         | size(HEIGHT, EQUAL, CARD_HEIGHT);
     };
 
     auto noble = [&](const Noble& n) {
         std::vector<Element> children = {
-            hbox({text(L"Points:    "), text(L"3") | bold}) | color(Color::White),
+            hbox({text(L"Points:    "), text(std::to_string(n.m_points)) | bold}) | color(Color::White),
             separator(),
         };
         for (auto it : n.m_cost) {
@@ -112,7 +117,7 @@ int main(void) {
         }
         auto content = vbox(children);
         return window(text(L" Bank "), content)
-        | size(WIDTH, EQUAL, CARD_WIDTH);
+        | size(WIDTH, EQUAL, CARD_WIDTH * 5);
     };
 
     auto draw_board = [&](Board& b) {
@@ -120,21 +125,21 @@ int main(void) {
 
         // Render 5 Nobles
         std::vector<Element> nobles;
-        int i = 0;
-        for (auto it : b.m_nobles) {
-            if (i++ == 5) break;
+        for (auto it : b.getNobles()) {
             nobles.push_back(noble(it));
         }
         root.push_back({hbox(nobles)});
 
         // Render 3 Rows of cards
         std::vector<Element> cards;
-        for (auto it : b.m_options.getMap()) {
+        int y = 0;
+        for (auto it : b.getCards()) {
             std::vector<Element> row = {
-                vbox(deck(static_cast<int>(it.first) + 1))
+                vbox(deck(static_cast<int>(it.first) + 1, {++y, 0}))
             };
+            int x = 1;
             for (auto it2 : it.second) {
-                row.push_back(vbox(card(it2)));
+                row.push_back(vbox(card(it2, {y, x++})));
             }
             cards.insert(cards.begin(),
             {
@@ -144,7 +149,7 @@ int main(void) {
         root.push_back(vbox(cards));
 
         // Render Bank
-        root.push_back(vbox(bank(b.m_bank)));
+        root.push_back(vbox(bank(b.getBank())));
 
         return vbox(root);
     };
@@ -157,17 +162,24 @@ int main(void) {
     });
     return window(text(L" Summary "), content);
   };
-   
+
 
   auto document = draw_board(board);
 
   // Limit the size of the document to 80 char.
   document = document | size(WIDTH, LESS_THAN, 80);
 
-  auto screen = Screen::Create(Dimension::Full(), Dimension::Fit(document));
-  Render(screen, document);
+//   auto screen = Screen::Create(Dimension::Full(), Dimension::Fit(document));
+//   Render(screen, document);
 
-  std::cout << screen.ToString() << '\0' << std::endl;
+//   std::cout << screen.ToString() << '\0' << std::endl;
+
+    // Interactive
+    std::string s1 = "test";
+    auto layout = Input(&s1);
+    auto renderer = Renderer(layout, [&] { return draw_board(board); });
+    auto screen = ScreenInteractive::TerminalOutput();
+    screen.Loop(renderer);
 
   return EXIT_SUCCESS;
 }
