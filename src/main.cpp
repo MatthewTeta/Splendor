@@ -14,6 +14,7 @@
 #include "ftxui/component/captured_mouse.hpp"       // for ftxui
 #include "ftxui/component/component.hpp"            // for Input, Renderer, Vertical
 #include "ftxui/component/component_base.hpp"       // for ComponentBase
+#include "ftxui/component/component_options.hpp" 
 
 #include "Pieces.hpp"
 #include "Board.hpp"
@@ -27,6 +28,7 @@
 //
 // };
 // static const std::map<Token::Type, token_text_t> token_map = {};
+
 
 int main(void) {
     using namespace ftxui;
@@ -151,35 +153,32 @@ int main(void) {
         // Render Bank
         root.push_back(vbox(bank(b.getBank())));
 
+
         return vbox(root);
     };
 
-  auto summary = [&] {
-    auto content = vbox({
-        hbox({text(L"- done:   "), text(L"3") | bold}) | color(Color::Green),
-        hbox({text(L"- active: "), text(L"2") | bold}) | color(Color::RedLight),
-        hbox({text(L"- queue:  "), text(L"9") | bold}) | color(Color::Red),
-    });
-    return window(text(L" Summary "), content);
-  };
-
-
-  auto document = draw_board(board);
-
-  // Limit the size of the document to 80 char.
-  document = document | size(WIDTH, LESS_THAN, 80);
-
-//   auto screen = Screen::Create(Dimension::Full(), Dimension::Fit(document));
-//   Render(screen, document);
-
-//   std::cout << screen.ToString() << '\0' << std::endl;
-
-    // Interactive
-    std::string s1 = "test";
-    auto layout = Input(&s1);
-    auto renderer = Renderer(layout, [&] { return draw_board(board); });
     auto screen = ScreenInteractive::TerminalOutput();
-    screen.Loop(renderer);
+    
+    std::vector<std::string> entries = {
+        "Take Three",
+        "Take Two",
+        "Purchase Card",
+        "Reserve Card"
+    };
+    int selected = 0;
+    
+    MenuOption option;
+    option.on_enter = screen.ExitLoopClosure();
+    auto menu = Menu(&entries, &selected, option);
 
-  return EXIT_SUCCESS;
+    // Create a Container to hold both the board and the menu --> this is so that the board is non-interactive and the menu is
+    auto container = Container::Vertical({
+        Renderer([&]{ return draw_board(board); }),  // Non-interactive board display
+        menu                                          // Interactive menu
+    });
+    
+    screen.Loop(container);
+    
+    std::cout << "Selected element = " << selected << std::endl;
+
 }
