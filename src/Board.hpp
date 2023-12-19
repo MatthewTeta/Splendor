@@ -103,6 +103,12 @@ public:
     }
 };
 
+static const std::map<int, Card::Type> ROW_MAP = {
+    { 0, Card::Type::ONE },
+    { 1, Card::Type::TWO },
+    { 2, Card::Type::THREE },
+};
+
 class Board {
 private:
     Deck m_deck;
@@ -169,6 +175,47 @@ public:
         }
     }
 
+    // Tries to copy the card at pos into the a_card_out param for inspection
+    bool getCardAtPosition(V2 pos, Card& a_card_out) {
+
+        if (pos.row >= 3 || pos.row < 0 || pos.col >= 4 || pos.col < 0) return false;
+
+        Card::Type t = ROW_MAP.at(pos.row);
+
+        if (pos.col == 0) {
+            // Get from top of the deck
+            if (m_deck[t].size() <= 4) return false;
+            a_card_out = m_deck[t].at(0);
+        } else {
+            // Get from cards layed out face up
+            if (pos.col <= m_deck[t].size()) return false;
+            a_card_out = m_deck[t].at(pos.col);
+        }
+
+        return true;
+    }
+
+    // Tries to move the card at the position out of the board / deck and into the a_card_out param
+    bool takeCardAtPosition(V2 pos, Card& a_card_out) {
+
+        if (pos.row >= 3 || pos.row < 0 || pos.col >= 4 || pos.col < 0) return false;
+
+        Card::Type t = ROW_MAP.at(pos.row);
+
+        if (pos.col == 0) {
+            // Get from top of the deck
+            if (m_deck[t].size() <= 4) return false;
+            a_card_out = m_deck[t].at(0);
+            m_deck[t].erase(m_deck[t].begin());
+        } else {
+            // Get from cards layed out face up
+            if (pos.col <= m_deck[t].size()) return false;
+            a_card_out = m_deck[t].at(pos.col);
+            m_deck[t].erase(m_deck[t].begin() + pos.col);
+        }
+
+        return true;
+    }
 
 };
 

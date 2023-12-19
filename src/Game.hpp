@@ -128,17 +128,89 @@ public:
                     }
 
                     // Perform the action
-                    // p.m_tokens.insert(p.m_tokens.end(), bank.end() - 2, bank.end());
-                    // bank.erase(bank.end() - 2);
+                    p.m_tokens.push_back(Token(m.token_type));
+                    p.m_tokens.push_back(Token(m.token_type));
+                    bank[m.token_type].pop_back();
+                    bank[m.token_type].pop_back();
 
                 },
                 [&](Reserve m) {
 
                     // Check move validity
-           
+                    if (p.m_reserve_cards.size() >= 3) {
+                        valid = false;
+                        return;
+                    }
+
+                    Card card;
+                    if (m_board.takeCardAtPosition(m.card_pos, card)) {
+                        p.m_reserve_cards.push_back(card);
+                        if (bank[Token::Type::Gold].size()) {
+                            p.m_tokens.push_back(Token(Token::Type::Gold));
+                        }
+                    } else {
+                        valid = false;
+                    }
 
                 },
-                [&](Purchase m) {}
+                [&](Purchase m) {
+
+                    // Check move validity
+                    Card card;
+                    if (m_board.getCardAtPosition(m.card_pos, card)) {
+                        // Check that player can purchase this card
+                        auto cost = card.m_cost;
+                        Player np = p;
+                        // First check the players hand for cards of each gem type
+                        for (auto x : p.m_cards) {
+                            for (auto& c : cost) {
+                                if (0 == c.first) break;
+                                if (x.m_token_type == c.second) c.first--;
+                            }
+                        }
+                        // Then check the gems to pay for the card
+                        std::vector<Token::Type> tokens_used;
+                        for (auto x : p.m_tokens) {
+                            for (auto& c : cost) {
+                                if (0 == c.first) break;
+                                if (x.m_token_type == c.second) {
+                                    c.first--;
+                                    tokens_used.push_back(x.m_token_type);
+                                }
+                            }
+                        }
+                        // Check if any costs are unsatisfied
+                        bool purchased = true;
+                        for (auto c : cost) {
+                            if (c.first) {
+                                purchased = false;
+                                break;
+                            }
+                        }
+                        if (!purchased) {
+                            valid = false;
+                            return;
+                        }
+                        // Move User tokens to the bank
+                        for (auto t : tokens_used) {
+                            int i = 0;
+                            for (auto x : np.m_tokens) {
+                                if (x.m_token_type == t) {
+                                    np.m_tokens.erase(np.m_tokens.begin() + i);
+                                    bank[t].push_back(Token(t));
+                                    break;
+                                }
+                                i++;
+                            }
+                        }
+                        // Actually take card out of the board and put it into the users hand
+                        m_board.takeCardAtPosition(m.card_pos, card);
+                        p.m_cards.push_back(card);
+                    } else {
+                        valid = false;
+                    }
+
+                }
             }, a);
         } while (!valid);
     }
@@ -146,4 +218,3 @@ public:
 };
 
 }
-

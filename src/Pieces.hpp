@@ -14,7 +14,7 @@
 namespace Splendor {
 
 struct V2 {
-    int x, y;
+    int row, col;
 };
 
 class Token {

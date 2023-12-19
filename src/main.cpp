@@ -38,7 +38,7 @@ int main(void) {
     board.shuffle();
 
     auto pos_text = [](V2 pos) {
-        return text(" " + std::to_string(pos.x) + ", " + std::to_string(pos.y) + " ");
+        return text(" " + std::to_string(pos.row) + ", " + std::to_string(pos.col) + " ");
     };
 
     auto token_text = [&](Token::Type t, int num) {
